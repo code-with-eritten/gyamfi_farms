@@ -97,7 +97,7 @@ class InventoryStatusFilter(admin.SimpleListFilter):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'product_type', 'get_animal_type', 'price', 'stock_status', 'is_active')
+    list_display = ('name', 'age', 'age', 'product_type', 'get_animal_type', 'price', 'stock_status', 'is_active')
     list_filter = ('product_type', 'animal_type', 'is_active', InventoryStatusFilter)
     search_fields = ('name', 'description')
     readonly_fields = ('created_at', 'updated_at')
@@ -107,7 +107,8 @@ class ProductAdmin(admin.ModelAdmin):
 
     fieldsets = [
         (None, {
-            'fields': ('name', 'slug', 'description', 'animal_type', 'product_type', 'price', 'suppliers', 'is_active')
+            'fields': (
+            'name', 'slug', 'age', 'description', 'animal_type', 'product_type', 'price', 'suppliers', 'is_active')
         }),
     ]
 
