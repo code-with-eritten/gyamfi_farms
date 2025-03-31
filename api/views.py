@@ -6,8 +6,9 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.cache import never_cache  # Correct import
 from stock_management.models import Product, ProductImage, AnimalType
-from .serializers import ProductSerializer, ProductImageSerializer
-
+from .serializers import ProductSerializer, ProductImageSerializer, OrderSerializer, ContactSerializer
+from django.core.mail import send_mail
+from django.conf import settings
 
 # Enable CORS Headers for All Origins
 @method_decorator(csrf_exempt, name='dispatch')
@@ -46,3 +47,63 @@ class CategoryListView(views.APIView):
         categories = list(set(animal_categories + product_categories))
         
         return JsonResponse({"categories": categories}, safe=False)
+
+
+class OrderView(views.APIView):
+    """Receives order details and sends an email"""
+
+    def post(self, request, *args, **kwargs):
+        serializer = OrderSerializer(data=request.data)
+        if serializer.is_valid():
+            order_data = serializer.validated_data
+
+            # Construct email message
+            subject = "New Order Received"
+            message = f"""
+            Full Name: {order_data['fullname']}
+            Email: {order_data['email']}
+            Phone Number: {order_data['phone_number']}
+            Delivery Address: {order_data['delivery_address']}
+            WhatsApp Number: {'Yes' if order_data['whatsapp_number'] else 'No'}
+            Product Name: {order_data['product_name']}
+            Additional Info: {order_data.get('additional_info', 'N/A')}
+            """
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,  # Sender
+                [settings.ADMIN_EMAIL],  # Recipient (Admin)
+                fail_silently=False,
+            )
+
+            return Response({"message": "Order received successfully"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ContactView(views.APIView):
+    """Receives contact form details and sends an email"""
+
+    def post(self, request, *args, **kwargs):
+        serializer = ContactSerializer(data=request.data)
+        if serializer.is_valid():
+            contact_data = serializer.validated_data
+
+            # Construct email message
+            subject = "New Contact Message"
+            message = f"""
+            Name: {contact_data['name']}
+            Email: {contact_data['email']}
+            Phone: {contact_data['phone']}
+            Company: {contact_data.get('company', 'N/A')}
+            Message: {contact_data['message']}
+            """
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,  # Sender
+                [settings.ADMIN_EMAIL],  # Recipient (Admin)
+                fail_silently=False,
+            )
+
+            return Response({"message": "Contact message received"}, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

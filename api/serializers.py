@@ -25,3 +25,23 @@ class ProductSerializer(serializers.ModelSerializer):
 
     def get_age(self, obj):
         return f"{obj.age} months old" if obj.age else "N/A"
+
+
+
+
+class OrderSerializer(serializers.Serializer):
+    product_name = serializers.CharField(max_length=255)  # Add product name
+    fullname = serializers.CharField(max_length=255)
+    email = serializers.EmailField()
+    phone_number = serializers.CharField(max_length=20)
+    delivery_address = serializers.CharField()
+    whatsapp_number = serializers.BooleanField()  # Yes or No
+    additional_info = serializers.CharField(required=False, allow_blank=True)
+
+
+class ContactSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=255)
+    email = serializers.EmailField()
+    phone = serializers.CharField(max_length=20)
+    company = serializers.CharField(required=False, allow_blank=True)
+    message = serializers.CharField()
