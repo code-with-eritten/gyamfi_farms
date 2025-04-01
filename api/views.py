@@ -67,6 +67,8 @@ class OrderView(views.APIView):
             Delivery Address: {order_data['delivery_address']}
             WhatsApp Number: {'Yes' if order_data['whatsapp_number'] else 'No'}
             Product Name: {order_data['product_name']}
+            quantity: {order_data['quantity']}
+            unit_price: {order_data['unit_price']}
             Additional Info: {order_data.get('additional_info', 'N/A')}
             """
             send_mail(

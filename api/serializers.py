@@ -30,15 +30,16 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.Serializer):
-    product_name = serializers.CharField(max_length=255)  # Add product name
+    product_name = serializers.CharField(max_length=255)  
+    quantity = serializers.IntegerField(min_value=1)  # Ensures positive values
+    unit_price = serializers.IntegerField(min_value=0)  # Ensures non-negative values
     fullname = serializers.CharField(max_length=255)
     email = serializers.EmailField()
     phone_number = serializers.CharField(max_length=20)
     delivery_address = serializers.CharField()
-    whatsapp_number = serializers.BooleanField()  # Yes or No
+    whatsapp_number = serializers.BooleanField()  # Indicates if phone number is WhatsApp
     additional_info = serializers.CharField(required=False, allow_blank=True)
-
-
+    
 class ContactSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=255)
     email = serializers.EmailField()
